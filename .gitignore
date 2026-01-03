@@ -1,0 +1,37 @@
+# dependencies
+node_modules/
+
+# rust build artifacts
+target/
+Cargo.lock
+
+# vite build output
+dist/
+
+# ide and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# os files
+.DS_Store
+Thumbs.db
+
+# logs
+*.log
+npm-debug.log*
+
+# env files
+.env
+.env.local
+.env.*.local
+
+# tauri build output
+src-tauri/target/
+
+# temp files
+*.tmp
+*.temp
+
