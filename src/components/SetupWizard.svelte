@@ -14,6 +14,8 @@
   
   let checking = false;
   let copied = null;
+  let downloadingYtdlp = false;
+  let ytdlpError = null;
   
   // 2a. copy command to clipboard
   async function copyCommand(cmd) {
@@ -36,6 +38,22 @@
     if ($dependencies.allGood) {
       dispatch('complete');
     }
+  }
+  
+  // 2c. auto-download yt-dlp
+  async function downloadYtdlp() {
+    downloadingYtdlp = true;
+    ytdlpError = null;
+    
+    try {
+      await invoke('download_ytdlp');
+      await checkDependencies();
+    } catch (err) {
+      console.error('failed to download yt-dlp:', err);
+      ytdlpError = err.toString();
+    }
+    
+    downloadingYtdlp = false;
   }
   
   // 2c. skip setup (use local files mode only)
@@ -132,6 +150,34 @@
           
           {#if !$dependencies.ytdlpInstalled}
             <p class="dep-desc">Needed for downloading YouTube videos. Skip if youre using local files.</p>
+            
+            <div class="auto-download-section">
+              <button 
+                class="btn-auto-download" 
+                on:click={downloadYtdlp}
+                disabled={downloadingYtdlp}
+              >
+                {#if downloadingYtdlp}
+                  <span class="spinner"></span>
+                  Downloading...
+                {:else}
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                  </svg>
+                  Auto-Download yt-dlp
+                {/if}
+              </button>
+              <span class="auto-hint">One click install - no terminal needed</span>
+              {#if ytdlpError}
+                <span class="auto-error">{ytdlpError}</span>
+              {/if}
+            </div>
+            
+            <div class="or-divider">
+              <span>or install manually</span>
+            </div>
             
             <div class="install-commands">
               <div class="cmd-group">
@@ -383,6 +429,67 @@
     display: flex;
     align-items: center;
     gap: var(--space-sm);
+  }
+  
+  .auto-download-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+    background: rgba(0, 255, 213, 0.05);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-md);
+  }
+  
+  .btn-auto-download {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-lg);
+    background: var(--accent-primary);
+    color: var(--bg-primary);
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 14px;
+    transition: all var(--transition-fast);
+  }
+  
+  .btn-auto-download:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 0 20px var(--accent-glow);
+  }
+  
+  .btn-auto-download:disabled {
+    opacity: 0.7;
+  }
+  
+  .auto-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  
+  .auto-error {
+    font-size: 11px;
+    color: var(--error);
+    text-align: center;
+  }
+  
+  .or-divider {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-bottom: var(--space-md);
+  }
+  
+  .or-divider::before,
+  .or-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-color);
   }
   
   @keyframes spin { to { transform: rotate(360deg); } }

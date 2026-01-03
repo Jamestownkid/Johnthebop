@@ -15,6 +15,7 @@ mod scrambler;
 mod jobs;
 mod sfx;
 mod utils;
+mod setup;
 
 use jobs::{JobManager, JobStatus, JobConfig, OutputFormat, BrollSource, OverlayPosition};
 use std::sync::Arc;
@@ -145,7 +146,8 @@ fn cancel_job(state: State<'_, AppState>, job_id: String) -> Result<(), String> 
 #[tauri::command]
 fn check_dependencies() -> Result<DependencyStatus, String> {
     let ffmpeg = which::which("ffmpeg").is_ok();
-    let ytdlp = which::which("yt-dlp").is_ok();
+    // use our setup module which checks PATH and app data dir
+    let ytdlp = setup::check_ytdlp_available();
     
     // detect gpu encoder availability
     let gpu_encoder = detect_gpu_encoder_name();
@@ -156,6 +158,14 @@ fn check_dependencies() -> Result<DependencyStatus, String> {
         all_good: ffmpeg,  // only ffmpeg is truly required, yt-dlp can be skipped with local mode
         gpu_encoder,
     })
+}
+
+// 5b. download yt-dlp if not already available
+// called from frontend when user wants to enable youtube mode
+#[tauri::command]
+async fn download_ytdlp() -> Result<String, String> {
+    let path = setup::ensure_ytdlp().await?;
+    Ok(path.to_string_lossy().to_string())
 }
 
 #[derive(serde::Serialize)]
@@ -299,6 +309,7 @@ fn main() {
             get_all_jobs,
             cancel_job,
             check_dependencies,
+            download_ytdlp,
             validate_youtube_url,
             get_app_dirs,
             get_overlay_positions,

@@ -6,6 +6,7 @@
 use std::path::{Path, PathBuf};
 use tokio::process::Command as AsyncCommand;
 use thiserror::Error;
+use crate::setup;
 
 // 2a. error types for download failures
 // thiserror saves us from writing a bunch of boilerplate
@@ -47,9 +48,15 @@ impl Downloader {
         Ok(Self { output_dir })
     }
 
-    // 5a. check if yt-dlp is installed
+    // 5a. check if yt-dlp is available (either in PATH or downloaded)
     pub fn check_ytdlp_installed() -> bool {
-        which::which("yt-dlp").is_ok()
+        setup::check_ytdlp_available()
+    }
+    
+    // 5b. get yt-dlp command path (downloads if needed)
+    async fn get_ytdlp_cmd(&self) -> DownloadResult<String> {
+        setup::get_ytdlp_command().await
+            .map_err(|e| DownloadError::DownloadFailed(e))
     }
 
     // 5b. download a single video
@@ -76,9 +83,12 @@ impl Downloader {
             });
         }
 
+        // get yt-dlp command (auto-downloads if needed)
+        let ytdlp_cmd = self.get_ytdlp_cmd().await?;
+        
         // actually download with yt-dlp
         // want best quality mp4 with both video and audio
-        let output = AsyncCommand::new("yt-dlp")
+        let output = AsyncCommand::new(&ytdlp_cmd)
             .args([
                 "-f", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
                 "--merge-output-format", "mp4",
@@ -109,7 +119,9 @@ impl Downloader {
     // 6a. get video info without downloading
     // returns (title, duration)
     async fn get_video_info(&self, url: &str) -> DownloadResult<(String, f64)> {
-        let output = AsyncCommand::new("yt-dlp")
+        let ytdlp_cmd = self.get_ytdlp_cmd().await?;
+        
+        let output = AsyncCommand::new(&ytdlp_cmd)
             .args([
                 "--dump-json",
                 "--no-download",

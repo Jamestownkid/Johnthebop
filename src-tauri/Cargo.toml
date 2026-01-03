@@ -77,6 +77,10 @@ futures = "0.3"
 # only used if user doesnt have it installed
 reqwest = { version = "0.11", features = ["stream"] }
 
+# 3n. dirs - finds standard directories (app data, etc)
+# needed for storing downloaded yt-dlp binary
+dirs = "5.0"
+
 [features]
 # 4a. tauri custom protocol for production builds
 default = ["custom-protocol"]
