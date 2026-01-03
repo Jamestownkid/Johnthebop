@@ -1,0 +1,37 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 
+    B-Roll Scrambler Icon
+    - dark rounded square background
+    - split screen representation (teal top, white bottom)
+    - subtle shuffle indicator
+  -->
+  
+  <!-- background -->
+  <rect width="512" height="512" rx="96" fill="#121212"/>
+  
+  <!-- outer glow/border -->
+  <rect x="8" y="8" width="496" height="496" rx="88" stroke="#00d4aa" stroke-width="4" stroke-opacity="0.3"/>
+  
+  <!-- top rectangle (b-roll) -->
+  <rect x="80" y="64" width="352" height="160" rx="24" fill="#00d4aa"/>
+  
+  <!-- film strip holes on top rectangle -->
+  <rect x="96" y="80" width="24" height="24" rx="4" fill="#121212" opacity="0.3"/>
+  <rect x="136" y="80" width="24" height="24" rx="4" fill="#121212" opacity="0.3"/>
+  <rect x="176" y="80" width="24" height="24" rx="4" fill="#121212" opacity="0.3"/>
+  <rect x="312" y="80" width="24" height="24" rx="4" fill="#121212" opacity="0.3"/>
+  <rect x="352" y="80" width="24" height="24" rx="4" fill="#121212" opacity="0.3"/>
+  <rect x="392" y="80" width="24" height="24" rx="4" fill="#121212" opacity="0.3"/>
+  
+  <!-- bottom rectangle (user video) -->
+  <rect x="80" y="288" width="352" height="160" rx="24" fill="#ffffff"/>
+  
+  <!-- user silhouette on bottom -->
+  <circle cx="256" cy="340" r="40" fill="#121212" opacity="0.2"/>
+  <rect x="200" y="380" width="112" height="52" rx="12" fill="#121212" opacity="0.2"/>
+  
+  <!-- shuffle arrows in the middle -->
+  <path d="M220 248 L256 232 L256 248 L292 248 L256 264 L256 248 L220 248" fill="#00d4aa"/>
+  <path d="M220 256 L256 272 L256 256 L292 256 L256 240 L256 256 L220 256" fill="#ffffff" opacity="0.8"/>
+  
+</svg>

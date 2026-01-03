@@ -1,0 +1,91 @@
+# 1a. cargo config for godz - the broll creator app
+# 1b. tauri desktop app that does video compositing magic
+# 1c. basically makes it easy for non-techies to create broll videos
+
+[package]
+name = "godz"
+version = "1.0.0"
+description = "create sick broll videos from youtube links - no command line needed"
+authors = ["godz team"]
+license = "MIT"
+repository = "https://github.com/Jamestownkid/Johnthebop"
+edition = "2021"
+
+# 2a. tauri build deps
+[build-dependencies]
+tauri-build = { version = "1.5", features = [] }
+
+[dependencies]
+# 2b. tauri - wraps our rust code in a nice desktop window
+# way lighter than electron and doesnt eat all your ram lmao
+tauri = { version = "1.6", features = ["shell-open", "dialog-all", "fs-all", "path-all"] }
+
+# 2c. serde - converts structs to json so frontend can read em
+# basically the glue between rust and javascript
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# 3a. tokio - async runtime for doing multiple things at once
+# downloading while encoding, that kinda thing
+tokio = { version = "1.35", features = ["full"] }
+
+# 3b. which - finds programs on the system
+# we use it to check if ffmpeg and yt-dlp exist
+which = "6.0"
+
+# 3c. uuid - generates unique ids for jobs
+# using v4 cuz its random and good enough
+uuid = { version = "1.6", features = ["v4"] }
+
+# 3d. chrono - timestamps and date stuff
+chrono = { version = "0.4", features = ["serde"] }
+
+# 3e. thiserror - makes error handling less painful
+# cuz writing impl Error by hand is lowkey tedious af
+thiserror = "1.0"
+
+# 3f. logging crates - helps when stuff breaks
+# trust me you want these when debugging at 2am
+log = "0.4"
+env_logger = "0.10"
+
+# 3g. rand - for randomizing clip order
+# content id evasion 101 - scramble everything
+rand = "0.8"
+
+# 3h. walkdir - scans folders recursively
+# used for finding sfx files and broll
+walkdir = "2.4"
+
+# 3i. regex - pattern matching
+# parsing ffmpeg output and youtube urls
+regex = "1.10"
+
+# 3j. crossbeam - thread-safe channels
+# for passing data between threads without pain
+crossbeam-channel = "0.5"
+
+# 3k. parking_lot - faster mutexes
+# standard lib mutexes work but these are snappier
+parking_lot = "0.12"
+
+# 3l. futures - async utilities
+# join_all is a lifesaver for parallel downloads
+futures = "0.3"
+
+# 3m. reqwest - http client for downloading yt-dlp
+# only used if user doesnt have it installed
+reqwest = { version = "0.11", features = ["stream"] }
+
+[features]
+# 4a. tauri custom protocol for production builds
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]
+
+# 4b. release profile - optimized for smol and fast
+[profile.release]
+panic = "abort"      # dont unwind, just die
+codegen-units = 1    # slower compile but better code
+lto = true           # link time optimization go brrr
+opt-level = "z"      # optimize for size
+strip = true         # yeet debug symbols
