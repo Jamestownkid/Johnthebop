@@ -48,16 +48,14 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "linux": {
-        "appimage": {
-          "bundleMediaFramework": true
-        },
-        "deb": {
-          "depends": []
-        }
-      },
       "shortDescription": "Create B-Roll videos easily",
-      "longDescription": "GODZ helps you create B-Roll composite videos from YouTube links or local files. Perfect for content creators who want to avoid copyright issues."
+      "longDescription": "GODZ helps you create B-Roll composite videos from YouTube links or local files. Perfect for content creators who want to avoid copyright issues.",
+      "appimage": {
+        "bundleMediaFramework": true
+      },
+      "deb": {
+        "depends": []
+      }
     },
     "security": {
       "csp": null
